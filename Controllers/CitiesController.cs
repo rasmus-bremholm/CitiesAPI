@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using CitiesApi.Models;
 using System.Text.Json;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace CitiesApi.Controllers;
 
@@ -54,7 +55,7 @@ public class CitiesController: ControllerBase
    }
 
    [HttpPost]
-   public ActionResult<City> AddCity(City city)
+   public async Task<ActionResult<City>> AddCity(City city)
    {
       if(_cities.ContainsKey(city.Id))
       {
@@ -63,7 +64,7 @@ public class CitiesController: ControllerBase
       try
       {
          _cities[city.Id] = city;
-         SaveToFile();
+         await SaveToFileAsync();
 
          return CreatedAtAction(nameof(GetCity),new {id = city.Id}, city);
       }
@@ -74,7 +75,7 @@ public class CitiesController: ControllerBase
    }
 
    [HttpDelete("{id}")]
-   public ActionResult<City> RemoveCity(int id)
+   public async Task<ActionResult<City>> RemoveCity(int id)
    {
       if(!_cities.ContainsKey(id))
       {
@@ -85,7 +86,7 @@ public class CitiesController: ControllerBase
       {
          var deletedCity = _cities[id];
          _cities.Remove(id);
-         SaveToFile();
+         await SaveToFileAsync();
 
          return Ok(new {message = "City Deleted", city = deletedCity});
       }
@@ -97,7 +98,7 @@ public class CitiesController: ControllerBase
    }
 
    [HttpPut("{id}")]
-   public ActionResult<City> UpdateCity(int id, City city)
+   public async Task<ActionResult<City>> UpdateCity(int id, City city)
    {
       if(!_cities.ContainsKey(id))
       {
@@ -107,7 +108,7 @@ public class CitiesController: ControllerBase
       try
       {
          _cities[id] = city;
-         SaveToFile();
+         await SaveToFileAsync();
 
          return Ok(new {message = "City Updated"});
       }
@@ -117,11 +118,11 @@ public class CitiesController: ControllerBase
       }
    }
 
-   private void SaveToFile()
+   private async Task SaveToFileAsync()
    {
       var citiesList = _cities.Values.ToList();
       var jsonString = JsonSerializer.Serialize(citiesList, new JsonSerializerOptions {WriteIndented = true});
-      System.IO.File.WriteAllText(FilePath, jsonString);
+      await System.IO.File.WriteAllTextAsync(FilePath, jsonString);
    }
 
 }
