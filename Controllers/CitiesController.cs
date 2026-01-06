@@ -56,12 +56,16 @@ public class CitiesController: ControllerBase
    [HttpPost]
    public ActionResult<City> AddCity(City city)
    {
+      if(_cities.ContainsKey(city.Id))
+      {
+         return BadRequest(new {error= $"City with ID {city.Id} already exists"});
+      }
       try
       {
          _cities[city.Id] = city;
          SaveToFile();
 
-         return Created("City Added",new {message = "City Added", cityId = city.Id});
+         return CreatedAtAction(nameof(GetCity),new {id = city.Id}, city);
       }
       catch (Exception ex)
       {

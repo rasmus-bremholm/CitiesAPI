@@ -23,5 +23,10 @@
     "Id": 5,
     "Name": "V\u00E4ster\u00E5s",
     "Population": 158010
+  },
+  {
+    "Id": 6,
+    "Name": "Arboga",
+    "Population": 2000
   }
 ]
