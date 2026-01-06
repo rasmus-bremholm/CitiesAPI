@@ -61,7 +61,7 @@ public class CitiesController: ControllerBase
          _cities[city.Id] = city;
          SaveToFile();
 
-         return Ok(new {message = "City Added", cityId = city.Id});
+         return Created("City Added",new {message = "City Added", cityId = city.Id});
       }
       catch (Exception ex)
       {
