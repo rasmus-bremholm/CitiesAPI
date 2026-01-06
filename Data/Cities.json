@@ -1,0 +1,27 @@
+[
+  {
+    "Id": 1,
+    "Name": "Stockholm",
+    "Population": 975551
+  },
+  {
+    "Id": 2,
+    "Name": "G\u00F6teborg",
+    "Population": 583056
+  },
+  {
+    "Id": 3,
+    "Name": "Malm\u00F6",
+    "Population": 347949
+  },
+  {
+    "Id": 4,
+    "Name": "Uppsala",
+    "Population": 233839
+  },
+  {
+    "Id": 5,
+    "Name": "V\u00E4ster\u00E5s",
+    "Population": 158010
+  }
+]
