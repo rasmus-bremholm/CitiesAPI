@@ -1,0 +1,25 @@
+# Build results
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userprefs
+*.userosscache
+
+# IDE files
+.vs/
+.vscode/
+.idea/
+
+# NuGet packages
+*.nupkg
+packages/
+
+# Mac files
+.DS_Store
+
+# Linux files
+*~
+
