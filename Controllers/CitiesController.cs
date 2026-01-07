@@ -63,22 +63,21 @@ public class CitiesController: ControllerBase
          return BadRequest(new {error = ex.Message});
       }
    }
-/*
+
    [HttpDelete("{id}")]
    public async Task<ActionResult<City>> RemoveCity(int id)
    {
-      if(!_cities.ContainsKey(id))
+      var city = await _context.Cities.FindAsync(id);
+      if(city == null)
       {
          return NotFound();
       }
 
       try
       {
-         var deletedCity = _cities[id];
-         _cities.Remove(id);
-         await SaveToFileAsync();
-
-         return Ok(new {message = "City Deleted", city = deletedCity});
+        _context.Cities.Remove(city);
+        await _context.SaveChangesAsync();
+         return Ok(new {message = "City Deleted", city});
       }
       catch (Exception ex)
       {
@@ -90,16 +89,22 @@ public class CitiesController: ControllerBase
    [HttpPut("{id}")]
    public async Task<ActionResult<City>> UpdateCity(int id, City city)
    {
-      if(!_cities.ContainsKey(id))
+      if(id != city.Id)
+      {
+         return BadRequest(new {error = "Id error"});
+      }
+
+      var existingCity = await _context.Cities.FindAsync(id);
+      if(existingCity == null)
       {
          return NotFound();
       }
 
       try
       {
-         _cities[id] = city;
-         await SaveToFileAsync();
-
+         existingCity.Name = city.Name;
+         existingCity.Population = city.Population;
+         await _context.SaveChangesAsync();
          return Ok(new {message = "City Updated"});
       }
       catch (Exception ex)
@@ -107,12 +112,4 @@ public class CitiesController: ControllerBase
          return BadRequest(new {error = ex.Message});
       }
    }
-
-   private async Task SaveToFileAsync()
-   {
-      var citiesList = _cities.Values.ToList();
-      var jsonString = JsonSerializer.Serialize(citiesList, new JsonSerializerOptions {WriteIndented = true});
-      await System.IO.File.WriteAllTextAsync(FilePath, jsonString);
-   }
-*/
 }
