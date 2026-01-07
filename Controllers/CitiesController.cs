@@ -3,6 +3,8 @@ using CitiesApi.Models;
 using System.Text.Json;
 using System.IO;
 using System.Threading.Tasks;
+using CitiesApi.Data;
+using Microsoft.EntityFrameworkCore;
 
 namespace CitiesApi.Controllers;
 
@@ -11,39 +13,26 @@ namespace CitiesApi.Controllers;
 
 public class CitiesController: ControllerBase
 {
-   private readonly Dictionary<int, City> _cities;
-   private const string FilePath = "Data/Cities.json";
 
-   public CitiesController()
+
+   private readonly AppDbContext _context;
+
+   public CitiesController(AppDbContext context)
    {
-      try
-      {
-         var jsonString = System.IO.File.ReadAllText(FilePath);
-         var citiesList = JsonSerializer.Deserialize<List<City>>(jsonString) ?? new List<City>();
-         _cities = citiesList.ToDictionary(c => c.Id);
-      }
-      catch (FileNotFoundException)
-      {
-      Console.WriteLine("File not found, making a new dict.");
-       _cities = new Dictionary<int, City>();
-      }
-      catch (JsonException)
-      {
-      Console.WriteLine("Json is bad. Making a new empty dict.");
-      _cities = new Dictionary<int, City>();
-      }
+      _context = context;
    }
 
    [HttpGet]
-   public ActionResult<Dictionary<int, City>> GetAllCities()
+   public async Task<ActionResult<IEnumerable<City>>> GetAllCities()
    {
-      if(_cities.Count == 0)
+      var cities = await _context.Cities.ToListAsync();
+      if(cities.Count == 0)
       {
          return NotFound();
       }
-      return Ok(_cities);
+      return Ok(cities);
    }
-
+/*
    [HttpGet("{id}")]
    public ActionResult<City> GetCity(int id)
    {
@@ -124,5 +113,5 @@ public class CitiesController: ControllerBase
       var jsonString = JsonSerializer.Serialize(citiesList, new JsonSerializerOptions {WriteIndented = true});
       await System.IO.File.WriteAllTextAsync(FilePath, jsonString);
    }
-
+*/
 }
