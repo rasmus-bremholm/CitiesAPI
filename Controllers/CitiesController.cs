@@ -32,29 +32,30 @@ public class CitiesController: ControllerBase
       }
       return Ok(cities);
    }
-/*
+
    [HttpGet("{id}")]
-   public ActionResult<City> GetCity(int id)
+   public async Task<ActionResult<City>> GetCity(int id)
    {
-      if(!_cities.ContainsKey(id))
+      var city = await _context.Cities.FindAsync(id);
+
+      if(city == null)
       {
          return NotFound();
       }
-      return Ok(_cities[id]);
+      return Ok(city);
    }
 
    [HttpPost]
    public async Task<ActionResult<City>> AddCity(City city)
    {
-      if(_cities.ContainsKey(city.Id))
+      if(await _context.Cities.FindAsync(city.Id) != null)
       {
          return BadRequest(new {error= $"City with ID {city.Id} already exists"});
       }
       try
       {
-         _cities[city.Id] = city;
-         await SaveToFileAsync();
-
+         _context.Cities.Add(city);
+         await _context.SaveChangesAsync();
          return CreatedAtAction(nameof(GetCity),new {id = city.Id}, city);
       }
       catch (Exception ex)
@@ -62,7 +63,7 @@ public class CitiesController: ControllerBase
          return BadRequest(new {error = ex.Message});
       }
    }
-
+/*
    [HttpDelete("{id}")]
    public async Task<ActionResult<City>> RemoveCity(int id)
    {
